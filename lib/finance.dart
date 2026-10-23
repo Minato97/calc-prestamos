@@ -4,19 +4,18 @@ enum LoanMethod { fixedPayment, fixedPrincipal, simpleInterest }
 
 extension LoanMethodText on LoanMethod {
   String get label => switch (this) {
-        LoanMethod.fixedPayment => 'Cuota fija',
-        LoanMethod.fixedPrincipal => 'Capital fijo',
-        LoanMethod.simpleInterest => 'Interés simple',
-      };
+    LoanMethod.fixedPayment => 'Cuota fija',
+    LoanMethod.fixedPrincipal => 'Capital fijo',
+    LoanMethod.simpleInterest => 'Interés simple',
+  };
 
   String get hint => switch (this) {
-        LoanMethod.fixedPayment =>
-          'Pagas lo mismo cada mes. Es el esquema más común en créditos personales y de auto.',
-        LoanMethod.fixedPrincipal =>
-          'Abonas el mismo capital cada mes; la cuota baja con el tiempo.',
-        LoanMethod.simpleInterest =>
-          'El interés se calcula sobre el monto inicial durante todo el plazo.',
-      };
+    LoanMethod.fixedPayment => 'Pagas lo mismo cada mes. Es el esquema más común en créditos personales y de auto.',
+    LoanMethod.fixedPrincipal =>
+      'Abonas el mismo capital cada mes; la cuota baja con el tiempo.',
+    LoanMethod.simpleInterest =>
+      'El interés se calcula sobre el monto inicial durante todo el plazo.',
+  };
 }
 
 class Installment {
@@ -67,26 +66,30 @@ LoanResult calculateLoan({
         final interest = balance * r;
         final cap = i == months ? balance : payment - interest;
         balance = max(0, balance - cap);
-        rows.add(Installment(
-          number: i,
-          payment: cap + interest,
-          principal: cap,
-          interest: interest,
-          balance: balance,
-        ));
+        rows.add(
+          Installment(
+            number: i,
+            payment: cap + interest,
+            principal: cap,
+            interest: interest,
+            balance: balance,
+          ),
+        );
       }
     case LoanMethod.fixedPrincipal:
       final cap = principal / months;
       for (var i = 1; i <= months; i++) {
         final interest = balance * r;
         balance = max(0, balance - cap);
-        rows.add(Installment(
-          number: i,
-          payment: cap + interest,
-          principal: cap,
-          interest: interest,
-          balance: balance,
-        ));
+        rows.add(
+          Installment(
+            number: i,
+            payment: cap + interest,
+            principal: cap,
+            interest: interest,
+            balance: balance,
+          ),
+        );
       }
     case LoanMethod.simpleInterest:
       final totalInterest = principal * (annualRate / 100) * months / 12;
@@ -94,13 +97,15 @@ LoanResult calculateLoan({
       final interest = totalInterest / months;
       for (var i = 1; i <= months; i++) {
         balance = max(0, balance - cap);
-        rows.add(Installment(
-          number: i,
-          payment: cap + interest,
-          principal: cap,
-          interest: interest,
-          balance: balance,
-        ));
+        rows.add(
+          Installment(
+            number: i,
+            payment: cap + interest,
+            principal: cap,
+            interest: interest,
+            balance: balance,
+          ),
+        );
       }
   }
   return LoanResult(rows);
@@ -160,7 +165,9 @@ String pesos(double v, {int decimals = 2}) {
   final fixed = v.abs().toStringAsFixed(decimals);
   final parts = fixed.split('.');
   final intPart = parts[0].replaceAllMapped(
-      RegExp(r'\B(?=(\d{3})+(?!\d))'), (_) => ',');
+    RegExp(r'\B(?=(\d{3})+(?!\d))'),
+    (_) => ',',
+  );
   final dec = parts.length > 1 ? '.${parts[1]}' : '';
   return '${neg ? '-' : ''}\$$intPart$dec';
 }

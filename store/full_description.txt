@@ -1,0 +1,19 @@
+Calcula en segundos cuánto pagarás por un préstamo y cuánto tendrás ahorrando, todo en pesos mexicanos y sin crear cuenta.
+
+PRÉSTAMO
+• Elige el método: cuota fija, capital fijo o interés simple.
+• Ve el pago mensual, el total de intereses y el total a pagar.
+• Consulta la tabla de pagos mes por mes con interés y saldo.
+
+AHORRO
+• Indica tu ahorro inicial, aportación mensual, rendimiento anual y plazo.
+• Descubre cuánto tendrás al final, cuánto aportaste y cuánto ganaste.
+• Incluye la inflación estimada para ver cuánto valdrá ese dinero en pesos de hoy.
+
+VENTAJAS
+• Sin registro y sin cuenta.
+• Tus datos no salen del teléfono.
+• Modo claro y oscuro.
+• Ligera y fácil de usar.
+
+Los cálculos son informativos. El costo real de un crédito puede incluir comisiones, seguros e IVA, y los rendimientos reales pueden variar. No es asesoría financiera.

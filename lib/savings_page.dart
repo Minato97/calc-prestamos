@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'ads.dart';
 import 'finance.dart';
+import 'widgets.dart';
 
 class SavingsPage extends StatefulWidget {
   const SavingsPage({super.key});
@@ -46,19 +47,36 @@ class _SavingsPageState extends State<SavingsPage> {
     if (showAd) AdService.instance.maybeShowInterstitial(every: 4);
   }
 
-  Widget _field(TextEditingController c, String label, {String? suffix}) =>
-      Padding(
-        padding: const EdgeInsets.only(bottom: 12),
-        child: TextField(
-          controller: c,
-          keyboardType: const TextInputType.numberWithOptions(decimal: true),
-          decoration: InputDecoration(
-            labelText: label,
-            suffixText: suffix,
-            border: const OutlineInputBorder(),
-          ),
+  Widget _field(
+    TextEditingController c,
+    String label, {
+    String? suffix,
+    IconData? icon,
+  }) => Padding(
+    padding: const EdgeInsets.only(bottom: 12),
+    child: TextField(
+      controller: c,
+      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+      decoration: InputDecoration(
+        labelText: label,
+        suffixText: suffix,
+        prefixIcon: icon == null ? null : Icon(icon),
+        filled: true,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide.none,
         ),
-      );
+      ),
+    ),
+  );
+
+  TextStyle? _head(ThemeData t) =>
+      t.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.bold);
+
+  Widget _cell(ThemeData t, int flex, String text) => Expanded(
+    flex: flex,
+    child: Text(text, style: t.textTheme.bodySmall),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -67,71 +85,152 @@ class _SavingsPageState extends State<SavingsPage> {
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
-        _field(_initial, 'Ahorro inicial', suffix: 'MXN'),
-        _field(_deposit, 'Aportación mensual', suffix: 'MXN'),
-        _field(_rate, 'Rendimiento anual', suffix: '%'),
-        _field(_months, 'Plazo', suffix: 'meses'),
-        _field(_inflation, 'Inflación anual estimada', suffix: '%'),
-        FilledButton.icon(
-          onPressed: _calculate,
-          icon: const Icon(Icons.savings),
-          label: const Text('Calcular'),
+        const HeroHeader(
+          title: 'Haz crecer tu ahorro',
+          subtitle: 'Interés compuesto con aportaciones e inflación.',
+        ),
+        const SizedBox(height: 16),
+        Section(
+          title: 'Datos del ahorro',
+          child: Column(
+            children: [
+              _field(
+                _initial,
+                'Ahorro inicial',
+                suffix: 'MXN',
+                icon: Icons.account_balance_wallet,
+              ),
+              _field(
+                _deposit,
+                'Aportación mensual',
+                suffix: 'MXN',
+                icon: Icons.add_card,
+              ),
+              _field(
+                _rate,
+                'Rendimiento anual',
+                suffix: '%',
+                icon: Icons.show_chart,
+              ),
+              _field(
+                _months,
+                'Plazo',
+                suffix: 'meses',
+                icon: Icons.calendar_month,
+              ),
+              _field(
+                _inflation,
+                'Inflación anual estimada',
+                suffix: '%',
+                icon: Icons.local_fire_department,
+              ),
+              const SizedBox(height: 4),
+              SizedBox(
+                width: double.infinity,
+                height: 52,
+                child: FilledButton.icon(
+                  onPressed: _calculate,
+                  icon: const Icon(Icons.savings),
+                  label: const Text(
+                    'Calcular',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
         if (res != null && res.rows.isNotEmpty) ...[
-          const SizedBox(height: 20),
-          Card(
-            color: theme.colorScheme.primaryContainer,
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text('Tendrás al final'),
-                  Text(
-                    pesos(res.finalBalance),
-                    style: theme.textTheme.headlineMedium
-                        ?.copyWith(fontWeight: FontWeight.bold),
-                  ),
-                  if (res.inflationRate > 0)
-                    Text(
-                      'Equivale a ${pesos(res.realValue)} de hoy tras la inflación',
-                    ),
-                ],
-              ),
-            ),
+          const SizedBox(height: 16),
+          ResultCard(
+            label: 'Tendrás al final',
+            value: pesos(res.finalBalance),
+            footnote: res.inflationRate > 0
+                ? 'Equivale a ${pesos(res.realValue)} de hoy tras la inflación'
+                : null,
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 12),
           Row(
             children: [
-              Expanded(child: _stat('Aportaste', pesos(res.totalContributed))),
-              const SizedBox(width: 8),
-              Expanded(child: _stat('Ganancia', pesos(res.totalInterest))),
+              Expanded(
+                child: StatTile(
+                  icon: Icons.south_west,
+                  label: 'Aportaste',
+                  value: pesos(res.totalContributed),
+                  color: kBlue,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: StatTile(
+                  icon: Icons.auto_graph,
+                  label: 'Ganancia',
+                  value: pesos(res.totalInterest),
+                  color: kTeal,
+                ),
+              ),
             ],
           ),
           const SizedBox(height: 16),
-          Text('Por mes', style: theme.textTheme.titleMedium),
-          const SizedBox(height: 8),
-          for (final r in res.rows)
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 3),
-              child: Row(children: [
-                Expanded(
-                    flex: 1,
-                    child: Text('${r.month}', style: theme.textTheme.bodySmall)),
-                Expanded(
-                    flex: 3,
-                    child: Text(pesos(r.contributed),
-                        style: theme.textTheme.bodySmall)),
-                Expanded(
-                    flex: 3,
-                    child: Text(pesos(r.interest),
-                        style: theme.textTheme.bodySmall)),
-                Expanded(
-                    flex: 3,
-                    child: Text(pesos(r.balance),
-                        style: theme.textTheme.bodySmall)),
-              ]),
+          Section(
+            title: 'Aportado vs. ganancia',
+            child: DonutChart(
+              principal: res.totalContributed,
+              interest: res.totalInterest,
             ),
+          ),
+          const SizedBox(height: 16),
+          Section(
+            title: 'Crecimiento mes a mes',
+            child: LineChart(
+              series: [
+                Series([for (final r in res.rows) r.balance], kTeal, 'Saldo'),
+                Series(
+                  [for (final r in res.rows) r.contributed],
+                  kBlue,
+                  'Aportado',
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
+          Section(
+            title: 'Por mes',
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Expanded(flex: 1, child: Text('#', style: _head(theme))),
+                    Expanded(
+                      flex: 3,
+                      child: Text('Aportado', style: _head(theme)),
+                    ),
+                    Expanded(
+                      flex: 3,
+                      child: Text('Ganancia', style: _head(theme)),
+                    ),
+                    Expanded(
+                      flex: 3,
+                      child: Text('Saldo', style: _head(theme)),
+                    ),
+                  ],
+                ),
+                const Divider(),
+                for (final r in res.rows)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 3),
+                    child: Row(
+                      children: [
+                        _cell(theme, 1, '${r.month}'),
+                        _cell(theme, 3, pesos(r.contributed)),
+                        _cell(theme, 3, pesos(r.interest)),
+                        _cell(theme, 3, pesos(r.balance)),
+                      ],
+                    ),
+                  ),
+              ],
+            ),
+          ),
           const SizedBox(height: 12),
           Text(
             'Cálculo informativo con interés compuesto mensual. Los rendimientos reales pueden variar.',
@@ -141,18 +240,4 @@ class _SavingsPageState extends State<SavingsPage> {
       ],
     );
   }
-
-  Widget _stat(String label, String value) => Card(
-        child: Padding(
-          padding: const EdgeInsets.all(12),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(label, style: Theme.of(context).textTheme.bodySmall),
-              const SizedBox(height: 4),
-              Text(value, style: const TextStyle(fontWeight: FontWeight.w600)),
-            ],
-          ),
-        ),
-      );
 }

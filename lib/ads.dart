@@ -4,10 +4,14 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 /// IDs de bloques de anuncios. Por defecto son los de PRUEBA de Google; para
 /// publicar se pasan los reales con --dart-define=BANNER_ID=ca-app-pub-.../...
 class AdIds {
-  static const banner = String.fromEnvironment('BANNER_ID',
-      defaultValue: 'ca-app-pub-3940256099942544/6300978111');
-  static const interstitial = String.fromEnvironment('INTERSTITIAL_ID',
-      defaultValue: 'ca-app-pub-3940256099942544/1033173712');
+  static const banner = String.fromEnvironment(
+    'BANNER_ID',
+    defaultValue: 'ca-app-pub-3940256099942544/6300978111',
+  );
+  static const interstitial = String.fromEnvironment(
+    'INTERSTITIAL_ID',
+    defaultValue: 'ca-app-pub-3940256099942544/1033173712',
+  );
 }
 
 class AdService {

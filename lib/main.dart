@@ -18,9 +18,12 @@ class App extends StatelessWidget {
     return MaterialApp(
       title: 'Préstamos y Ahorro',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(colorSchemeSeed: Colors.blue, useMaterial3: true),
+      theme: ThemeData(
+        colorSchemeSeed: const Color(0xFF1D4ED8),
+        useMaterial3: true,
+      ),
       darkTheme: ThemeData(
-        colorSchemeSeed: Colors.blue,
+        colorSchemeSeed: const Color(0xFF1D4ED8),
         brightness: Brightness.dark,
         useMaterial3: true,
       ),
@@ -58,7 +61,9 @@ class _HomePageState extends State<HomePage> {
             onDestinationSelected: (i) => setState(() => _tab = i),
             destinations: const [
               NavigationDestination(
-                  icon: Icon(Icons.account_balance), label: 'Préstamo'),
+                icon: Icon(Icons.account_balance),
+                label: 'Préstamo',
+              ),
               NavigationDestination(icon: Icon(Icons.savings), label: 'Ahorro'),
             ],
           ),
