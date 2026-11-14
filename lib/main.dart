@@ -4,6 +4,7 @@ import 'ads.dart';
 import 'loan_page.dart';
 import 'savings_page.dart';
 
+import 'app_theme.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   AdService.instance.init();
@@ -18,15 +19,8 @@ class App extends StatelessWidget {
     return MaterialApp(
       title: 'Préstamos y Ahorro',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorSchemeSeed: const Color(0xFF1D4ED8),
-        useMaterial3: true,
-      ),
-      darkTheme: ThemeData(
-        colorSchemeSeed: const Color(0xFF1D4ED8),
-        brightness: Brightness.dark,
-        useMaterial3: true,
-      ),
+      theme: appTheme(const Color(0xFF1D4ED8), Brightness.light),
+      darkTheme: appTheme(const Color(0xFF1D4ED8), Brightness.dark),
       home: const HomePage(),
     );
   }
